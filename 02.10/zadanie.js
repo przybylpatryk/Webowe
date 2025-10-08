@@ -1,9 +1,14 @@
 let http = require('http');
 let fs = require('fs/promises');
 const { readFile } = require('fs/promises');
+const { parse } = require('path');
+const url = require('url');
 http.createServer(async (req, res) => {
 
-  switch(req.url)
+    const parsedUrl = url.parse(req.url, true);
+    const path = parsedUrl.pathname;  
+
+    switch(path)
   {
     case "/html":
         res.writeHead(200, {'Content-Type': 'text/html; charset=UTF-8'});
@@ -27,18 +32,14 @@ http.createServer(async (req, res) => {
         res.end('<h1>HTML napisany bezpośrednio w node</h1>');
         break;
     case "/get_params":
-        const tab = new Array();    
-        console.log(http.get('http://api.open-notify.org/astros.json'));
+        console.log(parsedUrl.query);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
 
-        http.get('http://api.open-notify.org/astros.json', resp => {      
-        resp.on('data', chunk => {
-            tab.push(chunk);
-        })        
-        resp.on('end', () => {
-            let tabJson = JSON.stringify(tab);
-            console.log(tabJson);
-        })
-    })
+        let timestamp = Date.now();
+        const fileJson = 'params_'+timestamp+'.json'
+        fs.writeFile(fileJson, JSON.stringify(parsedUrl.query));
+
+        res.end(JSON.stringify({ ok: 'ok' }));
         break;
   }
 }).listen(8080);
