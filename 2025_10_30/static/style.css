@@ -1,0 +1,38 @@
+*{
+    font-family: "Cascadia Mono";
+    background-color: black;
+    color: white;
+}
+
+h1{
+    background-color: darkslateblue;
+    margin: 5px;
+    border-radius: 15px;
+}
+
+img{
+    width: 250px;
+    height: 250px;
+}
+
+table
+{
+    border: 1px solid white;
+}
+
+main{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+footer, h1, nav{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+a{
+    margin: 10px;
+}
