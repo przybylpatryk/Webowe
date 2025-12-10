@@ -2,42 +2,36 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { PrismaClient } = require('@prisma/client');
 const { MongoClient, ServerApiVersion } = require('mongodb');
-const uri = "mongodb+srv://Dzon:Wieprzowina@cluster.468owru.mongodb.net/?appName=Cluster";
+const uri = "mongodb+srv://patrykprzybyl_db_user:4IMrxrTWdFSSl6wH@cluster.iyhazhf.mongodb.net/?appName=Cluster";
 
 const prisma = new PrismaClient();
 const app = express();
 app.use(bodyParser.json());
 
 const client = new MongoClient(uri, {
-    serverApi: {
-        version: ServerApiVersion.v1,
-        strict: true,
-        deprecationErrors: true,
+    serverApi: 
+    { 
+      version: ServerApiVersion.v1, 
+      strict: true, 
+      deprecationErrors: true 
     }
 });
 
-async function run() {
-    try {
-        await client.connect();
-        await client.db("admin").command({ ping: 1 });
-        console.log("Pinged your deployment. You successfully connected to MongoDB!");
-        const db = client.db("Cluster");
-        const collection = db.collection("movies");
-        const findResult = await collection.find({}).toArray();
-        console.log('Found documents =>', findResult);
-    } finally {
-        await client.close();
-    }
-}
-run().catch(console.dir);
-
-
 app.use(async (req, res, next) => {
-    console.log("coś sie stalo");
+  try {
+    await client.connect();
+    mongoDb = client.db("Cluster");
+    await mongoDb.collection("accessLogs").insertOne({
+      date: new Date(),
+      method: req.method,
+      url: req.originalUrl,
+      body: req.body
+    });
+  } catch (err) {}
+  next();
+});
 
-})
-
-app.get('/wpisy', async (req, res, next) => {
+app.get('/wpisy', async (req, res) => {
   try {
     const wpisy = await prisma.wpis.findMany({
       include: {
@@ -153,6 +147,21 @@ app.delete('/komentarz/:id', async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
+});
+
+app.use(async (err, req, res, next) => {
+  try {
+    await client.connect();
+    mongoDb = client.db("Cluster");
+    await mongoDb.collection("errorLogs").insertOne({
+      date: new Date(),
+      message: err.message,
+      url: req.originalUrl,
+      method: req.method,
+      body: req.body
+    });
+  } catch (err) {}
+  res.json({ error: "error" });
 });
 
 app.listen(3000, () => {
