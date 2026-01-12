@@ -1,10 +1,13 @@
-export default function navbar() {
+import { Link } from "react-router-dom";
+import styles from "./Navbar.module.scss";
+
+export default function Navbar() {
     return (
-        <nav>
+        <nav className={styles.Navbar}>
             <ul>
-                <li>index</li>
-                <li>wpisy</li>
-                <li>kategorie</li>
+                <li><Link to="/">Strona główna</Link></li>
+                <li><Link to="/nwpis">Najnowszy wpis</Link></li>
+                <li><Link to="/kat">Kategorie</Link></li>
             </ul>
         </nav>
     )
