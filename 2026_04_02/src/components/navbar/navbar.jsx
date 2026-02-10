@@ -6,7 +6,7 @@ export default function Navbar() {
         <nav className={styles.Navbar}>
             <ul>
                 <li><Link to="/">Strona główna</Link></li>
-                <li><Link to="/nwpis">Najnowszy wpis</Link></li>
+                <li><Link to="/wpis/1">Najnowszy wpis</Link></li>
                 <li><Link to="/kat">Kategorie</Link></li>
             </ul>
         </nav>
